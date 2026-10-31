@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ZeroCheck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<header class="top">
+  <div class="brand"><span class="mark">Z</span><span>ZeroCheck</span></div>
+  <nav class="actions">
+    <button id="btnGrid" class="ghost">Questions</button>
+    <button id="btnKeys" class="ghost">Keys</button>
+    <button id="btnTheme" class="ghost" aria-label="Toggle light or dark theme">Theme</button>
+  </nav>
+</header>
+
+<main>
+  <!-- Setup -->
+  <section id="setup" class="card">
+    <p class="eyebrow">Setup</p>
+    <h2>Start a new session</h2>
+    <form id="setupForm">
+      <label class="full">
+        <span class="lbl">Topic name <em>Optional</em></span>
+        <input id="inTopic" type="text" maxlength="80" placeholder="e.g. Cardiology Set 3" autocomplete="off">
+      </label>
+      <label>
+        <span class="lbl">First question</span>
+        <input id="inFirst" type="number" min="0" value="1" required>
+      </label>
+      <label>
+        <span class="lbl">Number of questions</span>
+        <input id="inCount" type="number" min="1" placeholder="Open-ended">
+      </label>
+      <label>
+        <span class="lbl">Options per question</span>
+        <select id="inOptions">
+          <option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option>
+        </select>
+      </label>
+      <label>
+        <span class="lbl">Option style</span>
+        <select id="inStyle">
+          <option value="letters">A, B, C, D</option>
+          <option value="numbers">1, 2, 3, 4</option>
+          <option value="roman">I, II, III, IV</option>
+        </select>
+      </label>
+      <label>
+        <span class="lbl">Timing</span>
+        <select id="inTiming">
+          <option value="none">None</option>
+          <option value="stopwatch">Stopwatch</option>
+          <option value="timer">Timer</option>
+        </select>
+      </label>
+      <label id="minsWrap" class="hidden">
+        <span class="lbl">Timer minutes</span>
+        <input id="inMinutes" type="number" min="1" step="any" placeholder="e.g. 90">
+      </label>
+      <button type="submit" class="primary full">Start session</button>
+    </form>
+  </section>
+
+  <!-- Test -->
+  <section id="test" class="card hidden">
+    <div class="bar">
+      <div class="bar-info">
+        <span id="topicLabel" class="topic"></span>
+        <span id="progress" class="muted small"></span>
+      </div>
+      <div id="clock" class="clock hidden">
+        <span id="clockTime">00:00</span>
+        <button id="btnClock" class="mini">Pause</button>
+      </div>
+    </div>
+
+    <div class="qwrap">
+      <span class="eyebrow">Question</span>
+      <strong id="qNum">1</strong>
+      <span id="qStatus" class="status"></span>
+    </div>
+
+    <div id="options" class="options"></div>
+    <button id="btnSkip" class="skip">Skip question</button>
+
+    <div class="nav">
+      <button id="btnPrev">← Previous</button>
+      <button id="btnNext">Next →</button>
+    </div>
+
+    <button id="btnFinish" class="primary finish">Finish test</button>
+    <div class="foot"><button class="link js-new">New session</button></div>
+  </section>
+
+  <!-- Finished -->
+  <section id="done" class="card hidden">
+    <p class="eyebrow">Test complete</p>
+    <h2 id="doneTitle">Test finished</h2>
+
+    <div class="stats">
+      <div><span id="stAnswered">0</span><small>Answered</small></div>
+      <div><span id="stSkipped">0</span><small>Skipped</small></div>
+      <div><span id="stNone">0</span><small>Not answered</small></div>
+      <div id="stTimeBox"><span id="stTime">0</span><small>Time</small></div>
+    </div>
+
+    <label id="timeOpt" class="check">
+      <input type="checkbox" id="chkTime" checked>
+      <span>Include time in export</span>
+    </label>
+
+    <div class="export-choices">
+      <button id="btnPdf" class="primary">Download PDF</button>
+      <button id="btnCopy">Copy to clipboard</button>
+    </div>
+
+    <div class="foot2">
+      <button id="btnBack" class="link">← Back to test</button>
+      <button class="link js-new">New session</button>
+    </div>
+  </section>
+</main>
+
+<!-- Question grid -->
+<dialog id="dlgGrid">
+  <div class="dlg-head">
+    <h2>Questions</h2>
+    <button class="link" data-close>Close</button>
+  </div>
+  <div class="filters">
+    <button data-filter="all" class="chip on">All</button>
+    <button data-filter="skipped" class="chip">Skipped</button>
+    <button data-filter="unanswered" class="chip">Not answered</button>
+  </div>
+  <div id="grid" class="grid"></div>
+  <p class="muted small">Filled = answered. Dashed = skipped. Plain = not visited.</p>
+</dialog>
+
+<!-- Key mapping -->
+<dialog id="dlgKeys">
+  <div class="dlg-head">
+    <h2>Key mapping</h2>
+    <button class="link" data-close>Close</button>
+  </div>
+  <p class="muted small">Click an action, then press the key you want. Numpad keys work.</p>
+  <div id="keyList" class="keylist"></div>
+  <button id="btnResetKeys" class="link">Reset to defaults</button>
+</dialog>
+
+<div id="toast" class="toast" role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
